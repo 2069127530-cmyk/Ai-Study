@@ -1,0 +1,5 @@
+{
+  "name": "智学AI - 智能学情分析系统",
+  "description": "基于Gemini大模型的智能学情分析平台。上传试卷或答题卡，一键生成错题分析、薄弱知识点图谱及个性化提分计划。",
+  "requestFramePermissions": []
+}
