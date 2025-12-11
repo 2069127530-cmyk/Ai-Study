@@ -126,6 +126,15 @@ async function compressImage(base64Data: string, mimeType: string): Promise<{ da
 export const analyzeExamPaper = async (base64Image: string, mimeType: string): Promise<AnalysisResult> => {
   try {
     const apiKey = process.env.API_KEY;
+    
+    // Debug logging for troubleshooting deployment issues
+    if (!apiKey) {
+        console.error("Gemini Service: API Key is missing from process.env");
+    } else {
+        // Log masked key to verify it is loaded correctly (e.g. AIzaSy...)
+        console.log(`Gemini Service: API Key loaded (starts with ${apiKey.substring(0, 8)}...)`);
+    }
+
     if (!apiKey) {
       throw new Error("API Key is missing. Please check your environment configuration.");
     }

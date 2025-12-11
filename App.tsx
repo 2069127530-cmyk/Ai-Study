@@ -26,9 +26,27 @@ const App: React.FC = () => {
             const result = await analyzeExamPaper(base64Content, file.type);
             setAnalysisResult(result);
             setAppState('success');
-        } catch (error) {
-            console.error(error);
-            setErrorMessage("AI分析服务暂时不可用或无法识别该图片，请重试。(请确保已配置API Key)");
+        } catch (error: any) {
+            console.error("Analysis Failed:", error);
+            
+            let msg = "AI分析服务暂时不可用或无法识别该图片，请重试。";
+            
+            if (error instanceof Error) {
+                // Provide more specific feedback based on the error
+                if (error.message.includes("API Key")) {
+                    msg = "配置错误：未检测到 API Key。请在 Vercel 环境变量中设置 'API_KEY' 并重新部署。";
+                } else if (error.message.includes("403")) {
+                    msg = "权限错误：API Key 无效或配额已用完 (403 Forbidden)。";
+                } else if (error.message.includes("429")) {
+                    msg = "请求过多：请稍后再试 (429 Too Many Requests)。";
+                } else if (error.message.includes("503") || error.message.includes("500")) {
+                     msg = "服务繁忙：Google AI 服务暂时不可用，请稍后重试。";
+                } else {
+                     msg = `分析失败: ${error.message}`;
+                }
+            }
+            
+            setErrorMessage(msg);
             setAppState('error');
         }
       };
@@ -92,9 +110,9 @@ const App: React.FC = () => {
             </div>
 
             {appState === 'error' && (
-                <div className="bg-red-50 text-red-600 px-6 py-4 rounded-xl border border-red-100 flex items-center gap-3 max-w-md animate-in fade-in slide-in-from-bottom-4">
+                <div className="bg-red-50 text-red-600 px-6 py-4 rounded-xl border border-red-100 flex items-center gap-3 max-w-lg animate-in fade-in slide-in-from-bottom-4">
                     <div className="w-2 h-2 rounded-full bg-red-500 shrink-0"></div>
-                    <p>{errorMessage}</p>
+                    <p className="text-sm font-medium">{errorMessage}</p>
                 </div>
             )}
             
