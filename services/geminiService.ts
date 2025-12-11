@@ -67,7 +67,7 @@ const analysisSchema: Schema = {
 
 /**
  * Compresses an image base64 string to reduce payload size.
- * Resizes to max dimension of 1536px and reduces quality to 0.6.
+ * Resizes to max dimension of 1024px and reduces quality to 0.5.
  */
 async function compressImage(base64Data: string, mimeType: string): Promise<{ data: string; mimeType: string }> {
   // If not an image (e.g. PDF), return original
@@ -82,8 +82,8 @@ async function compressImage(base64Data: string, mimeType: string): Promise<{ da
       let width = img.width;
       let height = img.height;
       
-      // Max dimension 1536px to ensure reasonable payload size
-      const MAX_SIZE = 1536;
+      // Max dimension 1024px to ensure safe payload size (< 500KB usually)
+      const MAX_SIZE = 1024;
       if (width > height) {
         if (width > MAX_SIZE) {
           height = Math.round(height * (MAX_SIZE / width));
@@ -106,8 +106,8 @@ async function compressImage(base64Data: string, mimeType: string): Promise<{ da
       }
       
       ctx.drawImage(img, 0, 0, width, height);
-      // Convert to JPEG with 0.6 quality
-      const newDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+      // Convert to JPEG with 0.5 quality
+      const newDataUrl = canvas.toDataURL('image/jpeg', 0.5);
       resolve({ 
         data: newDataUrl.split(',')[1], 
         mimeType: 'image/jpeg' 
